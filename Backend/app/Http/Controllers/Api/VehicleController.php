@@ -7,43 +7,55 @@ use Illuminate\Http\Request;
 
 class VehicleController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         //
+    }
+
+    public function getAllVehicles(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+        ]);
+
+        $vehicles = \App\Models\Vehicle::with('policy')
+            ->whereHas('policy', function($q) use ($validated) {
+                $q->where('user_id', $validated['user_id']);
+            })
+            ->get();
+        $data = $vehicles->map(function($vehicle) {
+            return [
+                'policyNumber' => $vehicle->policy ? $vehicle->policy->policy_no : null,
+                'year' => $vehicle->year,
+                'make' => $vehicle->make,
+                'model' => $vehicle->model,
+                'vin' => $vehicle->vin,
+                'usage' => $vehicle->usage,
+                'primaryUse' => $vehicle->primary_use,
+                'annualMileage' => $vehicle->annual_mileage,
+                'ownership' => $vehicle->ownership,
+            ];
+        });
+        return response()->json($data);
     }
 }

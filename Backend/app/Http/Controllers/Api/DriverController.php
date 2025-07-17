@@ -7,43 +7,58 @@ use Illuminate\Http\Request;
 
 class DriverController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         //
+    }
+
+    public function getAllDrivers(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'required|integer|exists:users,id',
+        ]);
+
+        $drivers = \App\Models\Driver::with('policy')
+            ->whereHas('policy', function($q) use ($validated) {
+                $q->where('user_id', $validated['user_id']);
+            })
+            ->get();
+        $data = $drivers->map(function($driver) {
+            return [
+                'policyNumber' => $driver->policy ? $driver->policy->policy_no : null,
+                'firstName' => $driver->first_name,
+                'lastName' => $driver->last_name,
+                'age' => $driver->age,
+                'gender' => $driver->gender,
+                'maritalStatus' => $driver->marital_status,
+                'licenseNumber' => $driver->license_number,
+                'licenseState' => $driver->license_state,
+                'licenseStatus' => $driver->license_status,
+                'licenseEffectiveDate' => $driver->license_effective_date,
+                'licenseExpirationDate' => $driver->license_expiration_date,
+                'licenseClass' => $driver->license_class,
+            ];
+        });
+        return response()->json($data);
     }
 }

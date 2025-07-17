@@ -12,6 +12,7 @@ class Policy extends Model
         'policy_type',
         'policy_effective_date',
         'policy_expiration_date',
+        'user_id',
     ];
 
     public function holder() {

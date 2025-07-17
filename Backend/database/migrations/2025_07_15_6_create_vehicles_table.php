@@ -17,7 +17,7 @@ return new class extends Migration
             $table->year('year');
             $table->string('make');
             $table->string('model');
-            $table->string('vin')->unique();
+            $table->string('vin');
             $table->string('usage');
             $table->string('primary_use');
             $table->unsignedInteger('annual_mileage');

@@ -22,3 +22,5 @@ yarn-error.log
 /.nova
 /.vscode
 /.zed
+/Frontend/node_modules
+/Frontend/node_modules
